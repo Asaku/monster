@@ -1,68 +1,23 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: pomme
- * Date: 28/10/2016
- * Time: 11:06
- */
 
-class Monster {
+include('Monster.php');
+include('Database.php');
 
-    /**
-     * @var string $domainName
-     */
-    private $domainName;
-
-    /**
-     * @var string $email
-     */
-    private $email;
-
-    /**
-     * Monster constructor.
-     * @param string $domaineName
-     * @param string $email
-     */
-    public function __construct($domaineName = null, $email = null)
-    {
-        $this->domainName = $domaineName;
-        $this->email = $email;
-    }
-
-    /**
-     * @return array|mixed
-     */
-    public function start()
-    {
-        $emails = array();
-
-        if ($this->domainName)
-            $emails = $this->getByDomaineName();
-
-        if ($this->email)
-            $emails[] = $this->email;
-
-        $this->saveEmail($emails);
-
-        return $emails;
-    }
-
-    private function getByDomaineName($domaineName)
-    {
-        return $domaineName;
-    }
-
-    private function saveEmail(array $emails)
-    {
-
-    }
+try {
+    $bdd = new PDO('mysql:host=localhost;dbname=monster;charset=utf8', 'root', '');
+} catch (\Exception $e) {
+    echo $e->getMessage();
 }
-
-
 
 $domaineName = isset($_GET['name']);
 $email = isset($_GET['email']);
 
-$monster = new Monster($domaineName, $email);
+$database = new Database($bdd);
 
-$monster->start();
+
+foreach ($database->getEmails() as $result)
+    echo $result['id'].' => '.$result['email'];
+
+
+if ($email)
+    $database->insertEmail($email);
